@@ -1,50 +1,46 @@
-# 20151016
-Skip to content
-This repository  
-Search
-Pull requests
-Issues
-Gist
- @choikwangbeom
-You don’t have any verified emails. We recommend verifying at least one email.
-Email verification helps our support team verify ownership if you lose account access and allows you to receive all the notifications you ask for.
- Watch 3
-  Star 38
-  Fork 19 kowonsik/CCL
- Branch: master  CCL/openTSDB/opentsdb_centos.md
-ef5f1e  3 hours ago
-@kowonsik kowonsik Update opentsdb_centos.md
-1 contributor
-RawBlameHistory     285 lines (221 sloc)  7.3 KB
-Hadoop
 
-전체 또는 부분 데이터에 대해 다양한 분석 수행
-대용량 처리를 위해 분산, 병렬 처리 필요
-HBase(http://hbase.apache.org/)
+## Hadoop
+   - 전체 또는 부분 데이터에 대해 다양한 분석 수행
+   - 대용량 처리를 위해 분산, 병렬 처리 필요
 
-원본 데이터를 실시간으로 저장, 조회, 처리를 위한 저장소
-Hadoop의 서브프로젝트로 시작하여 지금은 Apache 정식 프로젝트가 되었으며, HBase란 이름은 Hadoop database에서 유래됨
-Hadoop의 “분산된,확장가능한,대용량 데이터를 다루는” 특징을 물려받으면서 ” Random, realtime read/write access”라는 고유한 데이터베이스스러운 특징도 가지고 있음.
-관계형 데이터베이스가 아닌 NoSQL 데이터베이스로 분류되고, 기존 SQL문을 일부만 지원하며, column-oriented 로 데이터를 저장.
-openTSDB(http://opentsdb.net)
+## HBase(http://hbase.apache.org/)
+   - 원본 데이터를 실시간으로 저장, 조회, 처리를 위한 저장소
+   - Hadoop의 서브프로젝트로 시작하여 지금은 Apache 정식 프로젝트가 되었으며, HBase란 이름은 Hadoop database에서 유래됨
+   - Hadoop의 “분산된,확장가능한,대용량 데이터를 다루는” 특징을 물려받으면서 ” Random, realtime read/write access”라는 고유한 데이터베이스스러운 특징도 가지고 있음.
+   - 관계형 데이터베이스가 아닌 NoSQL 데이터베이스로 분류되고, 기존 SQL문을 일부만 지원하며, column-oriented 로 데이터를 저장.
+   
+## openTSDB(http://opentsdb.net)
+  - HBase와 연계하여 시계열 데이터를 관리
+  - OpenTSDB is a tool that includes a time series database (built on hBase) and a web UI that uses GNUPlot for charting.
+   
+![opentsdb](https://raw.githubusercontent.com/kowonsik/CCL/master/openTSDB/png/opentsdb.png)
 
-HBase와 연계하여 시계열 데이터를 관리
-OpenTSDB is a tool that includes a time series database (built on hBase) and a web UI that uses GNUPlot for charting.
-opentsdb
+## OpenTSDB Install
 
-OpenTSDB Install
-
-centos update
-
+### centos update
+```sh
 # root 권한으로 필요시 수행
    yum -y update
-JAVA Setting
+
+```
+
+-----
+### JAVA Setting
+```sh
 
 [기존 java 삭제하기] 
 # 기존 시간에 설정한 사람은 다시 할 필요 없음
 # yum -y remove "java-*"
-1. jdk 다운로드
+
+```
+
+    1. jdk 다운로드
+```
 arch명령어를 통해 비트수 확인 후 설치
+```
+
+
+```sh
     cd ~/Downloads
 
     (64비트인 경우)
@@ -52,7 +48,7 @@ arch명령어를 통해 비트수 확인 후 설치
 
     (32비트인 경우)
     wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-i586.tar.gz"
-
+    
 
     cd ~/Downloads/
     tar –zxvf jdk-8u5-linux-x64.tar.gz
@@ -69,8 +65,12 @@ arch명령어를 통해 비트수 확인 후 설치
 
     # 실행
     source /etc/profile
-hbase Install(버전이 바뀔수도 있음)
+```
 
+-----
+
+### hbase Install(버전이 바뀔수도 있음)
+```sh
     cd /usr/local
     mkdir data
     cd data
@@ -79,29 +79,34 @@ hbase Install(버전이 바뀔수도 있음)
     cd hbase-1.1.2
     hbase_rootdir=${TMPDIR-'/usr/local/data'}/tsdhbase
     iface=lo'uname | sed -n s/Darwin/0/p'
-hbase-site.xml correction
-
+```
+##### hbase-site.xml correction
+```sh
     vim conf/hbase-site.xml
+```
 configuration Add to between the tags
-
+```sh
 <configuration>
-    <property>
-        <name>hbase.rootdir</name>
-        <value>file:///DIRECTORY/hbase</value>
-    </property>
-    <property>
-        <name>hbase.zookp.property.eataDir</name>
-        <value>/DRECTORY/zookeeper</value>
-    </property>
+	<property>
+		<name>hbase.rootdir</name>
+		<value>file:///DIRECTORY/hbase</value>
+	</property>
+	<property>
+		<name>hbase.zookp.property.eataDir</name>
+		<value>/DRECTORY/zookeeper</value>
+	</property>
 </configuration>
-hbase.sh Run
-
+```
+##### hbase.sh Run
+```sh
     ./bin/start-hbase.sh
     # master running as process (process number). Stop it first
-※When " hbase.sh " run, If this is notification because the setting of the 'java_home JDK' is not successful, Run a " profile " again ($ source /etc/profile)
+```
+※When " hbase.sh " run, If this is notification because the setting of the 'java_home JDK' is not successful,
+  Run a " profile " again ($ source /etc/profile)
 
-GnuPlot Install
-
+### GnuPlot Install
+```sh
     cd /usr/local
     yum install ant ant-nodeps lzo-devel.x86_64
     yum list \*gd\*
@@ -113,10 +118,11 @@ GnuPlot Install
     make install
     yum install gnuplot
     # apt-get install dh-autoreconf
-OpenTSDB Install
-
+```
+### OpenTSDB Install
+  ```sh
     cd /usr/local
-
+    
     # 필요시 yum install git
     git clone git://github.com/OpenTSDB/opentsdb.git
 
@@ -127,16 +133,20 @@ OpenTSDB Install
     env COMPRESSION=NONE HBASE_HOME=/usr/local/data/hbase-1.1.2 ./src/create_table.sh 
     tsdtmp=${TMPDIR-'/usr/local/data'}/tsd
     mkdir -p "$tsdtmp"
-Open TSDB Run
-
+```
+### Open TSDB Run
+```sh
     ./build/tsdb tsd --port=4242 --staticroot=build/staticroot --cachedir=/usr/local/data --auto-metric
 
     # 웹브라우저에서 확인
     http://127.0.0.1:4242
-association
 
-Data Input Test(Restful 방법)
+```
+![association](https://raw.githubusercontent.com/kowonsik/CCL/master/lecture/localhost.png)
 
+### Data Input Test(Restful 방법)
+
+```sh
 # openTSDB 동작중인 터미널은 닫지 말고..
 # 새로운 터미널을 열고 진행하세요...
 
@@ -145,6 +155,9 @@ sudo easy_install pip
 pip install requests
 
 vim post_test.py
+```
+
+```sh
 import time
 import requests
 import json
@@ -162,21 +175,37 @@ data = {
 
 ret = requests.post(url, data=json.dumps(data))
 print "ok"
+```
+
+```sh
+
 python post_test.py
 
     # 웹브라우저에서 확인
     http://127.0.0.1:4242
-association
+
+```
+
+![association](https://raw.githubusercontent.com/kowonsik/CCL/master/openTSDB/png/opentsdb_insert_test.png)
+
+
+```sh
 
 # 웹브라우저에서 확인
 http://127.0.0.1:4242/api/query?start=2015/10/14-00:00:00&end=2015/10/14-08:19:49&m=sum:foo.bar
 
 # 결과
 [{"metric":"foo.bar","tags":{"host":"mypc"},"aggregateTags":[],"dps":{"1444835983":2015.0}}]
-Temperature Input Test(Restful 방법)
+```
 
-위에 데이터 입력 코드와 아래 기상청에서 온도 가져오는 코드를 활용하여 openTSDB에 데이터를 입력하세요
-pip install python-devel
+### Temperature Input Test(Restful 방법)
+   - 위에 데이터 입력 코드와 아래 기상청에서 온도 가져오는 코드를 활용하여 openTSDB에 데이터를 입력하세요
+```sh
+
+pip install python-lxml
+# yum install python-devel
+
+# 실패시 다시 lxml 설치
 pip install lxml
 
 vim weather_test.py
@@ -194,59 +223,66 @@ url = 'http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=2823759100'
 temp=[]
 
 def temp_process(xml):
-    for  elt in xml.getiterator("temp"):    # getting temp tag 
-        temp_val = elt.text
-        print temp_val
+	for  elt in xml.getiterator("temp"):	# getting temp tag 
+		temp_val = elt.text
+		print temp_val
 
 def time_print():
-    now_unix = time.time()  # unix time
-    now = time.localtime()  # local time
+	now_unix = time.time()	# unix time
+	now = time.localtime()	# local time
 
-    now_year = now.tm_year  # year
-    now_mon = now.tm_mon    # month
-    now_day = now.tm_mday   # day
-    now_hour = now.tm_hour  # hour 
-    now_min = now.tm_min    # min
-    now_sec = now.tm_sec    # sec
+	now_year = now.tm_year	# year
+	now_mon = now.tm_mon	# month
+	now_day = now.tm_mday	# day
+	now_hour = now.tm_hour	# hour 
+	now_min = now.tm_min	# min
+	now_sec = now.tm_sec	# sec
 
-    print "======================="
-    print now_unix  # unix time print
-    print now
-    print "======================="
-    print now_year, now_mon, now_day, now_hour, now_min, now_sec    # time parsing
-    print "======================="
+	print "======================="
+	print now_unix	# unix time print
+	print now
+	print "======================="
+	print now_year, now_mon, now_day, now_hour, now_min, now_sec	# time parsing
+	print "======================="
 
 if __name__ == '__main__':
 
-    # time print function
-    time_print()
+	# time print function
+	time_print()
 
-    page = urllib2.urlopen(url).read()
+	page = urllib2.urlopen(url).read()
 
-    # fromstring : Parses an XML document or fragment from a string. 
-    # Returns the root node (or the result returned by a parser target).
-    xml_raw = fromstring(page)
+	# fromstring : Parses an XML document or fragment from a string. 
+	# Returns the root node (or the result returned by a parser target).
+	xml_raw = fromstring(page)
 
-    # processing temperature
-    temp_process(xml_raw)
-    python weather_test.py
-Tcollector Install
+	# processing temperature
+	temp_process(xml_raw)
 
+```
+```sh
+
+	python weather_test.py
+```
+
+### Tcollector Install
 Execution of one terminal anymore
-
+```sh
     cd /usr/local
     git clone git://github.com/OpenTSDB/tcollector.git
     cd tcollector
-'startstop' Changing the file
-
+```
+##### 'startstop' Changing the file
+```sh
     vim startstop
+```
 Please comment cancel the portion of the '#TSD_HOST=dns.name.of.tsd' and Enter the Ip address.(4~5 line)
-
+```sh
     TSD_HOST=192.168.X.X
-Tcollector Run - Execution of one terminal anymore
-
+```
+### Tcollector Run - Execution of one terminal anymore
+```sh
     ./startstop start
     tail -f /var/log/tcollector.log
-The connection with 'http://192.168.x.x:4242' in the web address bar
-Status API Training Shop Blog About Pricing
-© 2015 GitHub, Inc. Terms Privacy Security Contact Help
+```
+##### The connection with 'http://192.168.x.x:4242' in the web address bar
